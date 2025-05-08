@@ -10,6 +10,12 @@ Reasons:
 
 This project aims to be a drop-in replacement for [feedparser](https://github.com/kurtmckee/feedparser)
 
+# Installation
+
+```
+    $ pip install brutefeedparser
+```
+
 # Standards? What standards?
 
 This project does not care about standards. Standards are for loosers. 
