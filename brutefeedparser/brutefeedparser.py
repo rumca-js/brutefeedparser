@@ -302,7 +302,7 @@ class BruteFeedParser(object):
         self.root = None
 
     def parse(contents):
-        r = FeedReader(contents)
+        r = BruteFeedParser(contents)
         r.parse_implementation()
         return r
 
@@ -342,6 +342,9 @@ class BruteFeedParser(object):
 
         if entries:
             self.read_entries(entries)
+
+    def is_valid(self):
+        return self.feed is not None
 
     def process_html(self):
         # TODO what if we have < html?
