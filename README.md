@@ -23,6 +23,11 @@ This project does not care about standards. Standards are for loosers.
 
 Look at me! I am the standard now!
 
+You can quote me on the thing below:
+```
+If the problem is a nail and your hammer fails, perhaps it's time to reach for a bigger one.
+```
+
 # Disclaimer
 
 This project contains code so questionable that at least one line could cause Linus Torvalds to spontaneously combust.
