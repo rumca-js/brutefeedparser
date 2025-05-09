@@ -7,6 +7,7 @@ Reasons:
  - feedparser does not parse everything. I can vividly recall that it could not parse something
  - does not parse CDATA correctly (at least what I remember)
  - there were some problems with using it in threads (async functions). There was some warning, or error
+ - some parsers cannot handle RSS in da HTML, which is a bummer. I plan to fix this. In valve time
 
 This project aims to be a drop-in replacement for [feedparser](https://github.com/kurtmckee/feedparser)
 
@@ -21,6 +22,11 @@ This project aims to be a drop-in replacement for [feedparser](https://github.co
 This project does not care about standards. Standards are for loosers. 
 
 Look at me! I am the standard now!
+
+You can quote me on the thing below:
+```
+If the problem is a nail and your hammer fails, perhaps it's time to reach for a bigger one.
+```
 
 # Disclaimer
 
