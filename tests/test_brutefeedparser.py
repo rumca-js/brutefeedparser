@@ -27,7 +27,7 @@ from tests.fake.reddit import (
 )
 
 
-class BruteFeedParserTest(unittest.TestCase):
+class BruteFeedParserFeedTest(unittest.TestCase):
 
     def test_is_valid__true_youtube(self):
         reader = BruteFeedParser.parse(webpage_samtime_youtube_rss)
@@ -37,21 +37,21 @@ class BruteFeedParserTest(unittest.TestCase):
 
     def test_is_valid__true(self):
         reader = BruteFeedParser.parse(webpage_old_pubdate_rss)
-        entries = reader.get_entries()
+        entries = reader.entries
 
         # call tested function
         self.assertTrue(reader.is_valid())
 
     def test_is_valid__geek_true(self):
         reader = BruteFeedParser.parse(geekwire_feed)
-        entries = reader.get_entries()
+        entries = reader.entries
 
         # call tested function
         self.assertTrue(reader.is_valid())
 
     def test_is_valid__warhammer_true(self):
         reader = BruteFeedParser.parse(warhammer_community_rss)
-        entries = reader.get_entries()
+        entries = reader.entries
 
         # call tested function
         self.assertTrue(reader.is_valid())
@@ -87,7 +87,7 @@ class BruteFeedParserTest(unittest.TestCase):
 
         # call tested function
         self.assertEqual(
-            reader.feed.media_thumbnail["url"],
+            reader.feed.image["url"],
             "https://thumbnails.lbry.com/UCd6vEDS3SOhWbXZrxbrf_bw",
         )
         self.assertTrue(reader.is_valid())
@@ -99,38 +99,41 @@ class BruteFeedParserTest(unittest.TestCase):
         self.assertEqual(reader.feed.author, "SAMTIME author")
         self.assertTrue(reader.is_valid())
 
-    def test_get_entries__len(self):
+
+class BruteFeedParserEntriesTest(unittest.TestCase):
+
+    def test_entries__len(self):
         reader = BruteFeedParser.parse(webpage_rss_cdata)
 
         # call tested function
-        entries = reader.get_entries()
+        entries = reader.entries
 
         entries = list(entries)
         self.assertEqual(len(entries), 15)
 
         entry = entries[0]
-        self.assertEqual(entry["title"], "First entry title")
-        self.assertEqual(entry["description"], "First entry description")
+        self.assertEqual(entry.title, "First entry title")
+        self.assertEqual(entry.description, "First entry description")
         self.assertTrue(reader.is_valid())
 
-    def test_get_entries__old_date(self):
+    def test_entries__old_date(self):
         # default language
         reader = BruteFeedParser.parse(webpage_old_pubdate_rss)
-        entries = reader.get_entries()
+        entries = reader.entries
         entries = list(entries)
         self.assertEqual(len(entries), 1)
 
         entry = entries[0]
-        self.assertEqual(entry["title"], "First entry title")
-        self.assertEqual(entry["description"], "First entry description")
-        self.assertEqual(entry["date_published"].year, 2020)
+        self.assertEqual(entry.title, "First entry title")
+        self.assertEqual(entry.description, "First entry description")
+        self.assertTrue(entry.published.find("2020") >= 0)
         self.assertTrue(reader.is_valid())
 
-    def test_get_entries__current_year(self):
+    def test_entries__current_year(self):
         reader = BruteFeedParser.parse(webpage_no_pubdate_rss)
 
         # call tested function
-        entries = reader.get_entries()
+        entries = reader.entries
         entries = list(entries)
 
         self.assertEqual(len(entries), 1)
@@ -138,55 +141,43 @@ class BruteFeedParserTest(unittest.TestCase):
         current_date_time = datetime.now()
 
         entry = entries[0]
-        self.assertEqual(entry["title"], "First entry title")
-        self.assertEqual(entry["description"], "First entry description")
-        self.assertEqual(entry["date_published"].year, current_date_time.year)
+        self.assertEqual(entry.title, "First entry title")
+        self.assertEqual(entry.description, "First entry description")
+        self.assertFalse(entry.published)
         self.assertTrue(reader.is_valid())
 
-    def test_get_entries__page_rating(self):
-        reader = BruteFeedParser.parse(webpage_no_pubdate_rss)
-
-        # call tested function
-        entries = reader.get_entries()
-        entries = list(entries)
-
-        self.assertEqual(len(entries), 1)
-
-        entry = entries[0]
-        self.assertTrue(entry["page_rating"] > 0)
-
-    def test_get_entries__rss(self):
+    def test_entries__rss(self):
         reader = BruteFeedParser.parse(webpage_old_pubdate_rss)
 
         # call tested function
-        entries = list(reader.get_entries())
+        entries = list(reader.entries)
 
         self.assertTrue(len(entries) > 0)
 
-    def test_get_entries__geek(self):
+    def test_entries__geek(self):
         reader = BruteFeedParser.parse(geekwire_feed)
 
         # call tested function
-        entries = list(reader.get_entries())
+        entries = list(reader.entries)
 
         self.assertTrue(len(entries) > 0)
 
-    def test_get_entries__hackernews(self):
+    def test_entries__hackernews(self):
         reader = BruteFeedParser.parse(webpage_hackernews_rss)
 
         # call tested function
-        entries = list(reader.get_entries())
+        entries = list(reader.entries)
 
         self.assertTrue(len(entries) > 0)
 
         self.assertIn("author", entries[0])
         self.assertTrue(entries[0]["author"])
 
-    def test_get_entries__reddit(self):
+    def test_entries__reddit(self):
         reader = BruteFeedParser.parse(reddit_rss_text)
 
         # call tested function
-        entries = list(reader.get_entries())
+        entries = list(reader.entries)
 
         self.assertTrue(len(entries) > 0)
 
