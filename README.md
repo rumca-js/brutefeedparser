@@ -1,13 +1,13 @@
 # Overview
 
-This is a brute feed parser.
+This is a brute-force feed parser.
 
-Reasons:
+Why?
 
- - feedparser does not parse everything. I can vividly recall that it could not parse something
- - does not parse CDATA correctly (at least what I remember)
- - there were some problems with using it in threads (async functions). There was some warning, or error
- - some parsers cannot handle RSS in da HTML, which is a bummer. I plan to fix this. In valve time
+ - feedparser doesn’t handle all feeds correctly. I can vividly recall that it could not parse something
+ - It has trouble parsing CDATA sections (at least, from what I recall).
+ - There were issues using it in threaded or async contexts—warnings or errors would show up.
+ - Some parsers can’t handle RSS embedded in HTML, which is unfortunate. I plan to address this... eventually (in Valve time).
 
 This project aims to be a drop-in replacement for [feedparser](https://github.com/kurtmckee/feedparser)
 
