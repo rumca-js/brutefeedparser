@@ -17,6 +17,12 @@ This project aims to be a drop-in replacement for [feedparser](https://github.co
     $ pip install brutefeedparser
 ```
 
+# Use
+
+```
+reader = BruteFeedParser.parse(contents)
+```
+
 # Standards? What standards?
 
 This project does not care about standards. Standards are for loosers. 
