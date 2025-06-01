@@ -5,11 +5,12 @@ a) feedparser does not work with asyncio properly
 b) it contained error, which prevented me from reading one RSS feed (it did not read entry.link)
 """
 
+from bs4 import BeautifulSoup
 import html
 import lxml.etree as ET
 
 
-__version__ = "0.0.2"
+__version__ = "0.10.5"
 
 
 class FeedObject(object):
@@ -40,6 +41,9 @@ class FeedObject(object):
             if attribute in aproperty_value.attrib:
                 return aproperty_value.attrib[attribute]
 
+    def __str__(self):
+        return ET.tostring(self.root, encoding='unicode', pretty_print=True)
+
 
 class FeedReaderEntry(FeedObject):
     def __init__(self, entry_data, ns):
@@ -58,6 +62,7 @@ class FeedReaderEntry(FeedObject):
         self.try_published()
         self.try_media_thumbnail()
         self.try_media_content()
+        self.try_images()
         self.try_author()
 
         self.tags = self.try_to_get_field("tags")
@@ -119,6 +124,21 @@ class FeedReaderEntry(FeedObject):
             media_content = self.get_prop_attribute(".//media:content", "url") # youtube
             if media_content:
                 self.media_content = [{"url": media_content}]
+
+    def try_images(self):
+        self.images = []
+        if len(self.media_content) == 0 and len(self.media_thumbnail) == 0:
+            # check each child to see if it has images
+            for child in self.root:
+                html_text = child.text
+                if not html_text:
+                    continue
+
+                soup = BeautifulSoup(html_text, 'html.parser')
+                img = soup.find('img')
+                if img and img.get('src'):
+                    self.images.append({"url" : img['src']})
+                    break
 
     def try_to_get_field(self, field):
         value = self.get_prop("./" + field)

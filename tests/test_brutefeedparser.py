@@ -29,9 +29,15 @@ from tests.fake.reddit import (
 from tests.fake.thehill import (
     thehill_rss,
 )
+from tests.fake.indexhu import (
+    index_hu,
+)
 
 
 class BruteFeedParserFeedTest(unittest.TestCase):
+    """
+    Generic feed tests
+    """
 
     def test_is_valid__true_youtube(self):
         reader = BruteFeedParser.parse(webpage_samtime_youtube_rss)
@@ -139,6 +145,9 @@ class BruteFeedParserFeedTest(unittest.TestCase):
 
 
 class BruteFeedParserEntriesTest(unittest.TestCase):
+    """
+    Generic entries tests
+    """
 
     def test_entries__len(self):
         reader = BruteFeedParser.parse(webpage_rss_cdata)
@@ -192,12 +201,27 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
 
         self.assertTrue(len(entries) > 0)
 
+    def test_entries__reddit(self):
+        reader = BruteFeedParser.parse(reddit_rss_text)
+
+        # call tested function
+        entries = list(reader.entries)
+
+        self.assertTrue(len(entries) > 0)
+
+        self.assertIn("author", entries[0])
+        self.assertTrue(entries[0].author)
+
+
+class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
+
     def test_entries__geek(self):
         reader = BruteFeedParser.parse(geekwire_feed)
 
         # call tested function
         entries = list(reader.entries)
 
+        # TODO RSS is in HTML, appears not to be read correctly
         self.assertTrue(len(entries) > 0)
 
     def test_entries__hackernews(self):
@@ -209,10 +233,12 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
         self.assertTrue(len(entries) > 0)
 
         self.assertIn("author", entries[0])
-        self.assertTrue(entries[0]["author"])
+        # TODO dc:creator appears to be not read correctly
+        self.assertTrue(entries[0].author)
 
-    def test_entries__reddit(self):
-        reader = BruteFeedParser.parse(reddit_rss_text)
+
+    def test_entries__index_hu(self):
+        reader = BruteFeedParser.parse(index_hu)
 
         # call tested function
         entries = list(reader.entries)
@@ -220,4 +246,4 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
         self.assertTrue(len(entries) > 0)
 
         self.assertIn("author", entries[0])
-        self.assertTrue(entries[0].author)
+        self.assertTrue(len(entries[0].images) > 0)
