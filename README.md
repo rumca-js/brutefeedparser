@@ -20,6 +20,8 @@ This project aims to be a drop-in replacement for [feedparser](https://github.co
 # Use
 
 ```
+from brutefeedparser import BruteFeedParser
+
 reader = BruteFeedParser.parse(contents)
 ```
 
