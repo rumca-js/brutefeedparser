@@ -1,6 +1,7 @@
 from datetime import datetime
 import unittest
 import gc
+import lxml.etree as ET
 
 from brutefeedparser import BruteFeedParser
 
@@ -42,7 +43,7 @@ class BruteFeedParserFeedTest(unittest.TestCase):
     Generic feed tests
     """
     def setUp(self):
-        self.ignore_memory = False
+        self.ignore_memory = True
         self.memory_checker = MemoryChecker()
         memory_increase = self.memory_checker.get_memory_increase()
         #print(f"Memory increase {memory_increase} setup")
@@ -148,6 +149,8 @@ class BruteFeedParserFeedTest(unittest.TestCase):
         self.assertEqual(p.feed.link, "https://thehill.com")
         self.assertEqual(len(p.entries), 100)
 
+        p.close()
+
     def test_hacker_news(self):
         # default language
         p = BruteFeedParser.parse(webpage_hackernews_rss)
@@ -163,6 +166,22 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
     """
     Generic entries tests
     """
+    def setUp(self):
+        # to allocated C lib memory
+        parser = ET.XMLParser(strip_cdata=False, recover=True)
+        root = ET.fromstring(reddit_rss_text.encode(), parser=parser)
+
+        self.ignore_memory = True
+        self.memory_checker = MemoryChecker()
+        memory_increase = self.memory_checker.get_memory_increase()
+        #print(f"Memory increase {memory_increase} setup")
+
+    def tearDown(self):
+        gc.collect()
+
+        if not self.ignore_memory:
+            memory_increase = self.memory_checker.get_memory_increase()
+            self.assertEqual(memory_increase, 0)
 
     def test_entries__len(self):
         reader = BruteFeedParser.parse(webpage_rss_cdata)
@@ -229,6 +248,22 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
 
 
 class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
+    def setUp(self):
+        # to allocated C lib memory
+        parser = ET.XMLParser(strip_cdata=False, recover=True)
+        root = ET.fromstring(reddit_rss_text.encode(), parser=parser)
+
+        self.ignore_memory = True
+        self.memory_checker = MemoryChecker()
+        memory_increase = self.memory_checker.get_memory_increase()
+        #print(f"Memory increase {memory_increase} setup")
+
+    def tearDown(self):
+        gc.collect()
+
+        if not self.ignore_memory:
+            memory_increase = self.memory_checker.get_memory_increase()
+            self.assertEqual(memory_increase, 0)
 
     def test_entries__geek(self):
         reader = BruteFeedParser.parse(geekwire_feed)
@@ -250,7 +285,6 @@ class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
         self.assertIn("author", entries[0])
         # TODO dc:creator appears to be not read correctly
         self.assertTrue(entries[0].author)
-
 
     def test_entries__index_hu(self):
         reader = BruteFeedParser.parse(index_hu)

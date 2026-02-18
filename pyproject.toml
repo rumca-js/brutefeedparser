@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "brutefeedparser"
-version = "0.10.6"
+version = "0.10.7"
 description = "Brute Feed Parser"
 authors = ["Iwan Grozny <renegat@renegat0x0.ddns.net>"]
 license = "GPL3"

@@ -307,7 +307,6 @@ class FeedReaderFeed(FeedObject):
 
         return value
 
-
     def __contains__(self, item):
         return True
 
@@ -320,6 +319,8 @@ class BruteFeedParser(object):
 
         self.ns = {}
         self.root = None
+        self.feed = None
+        self.entries = []
 
     def parse(contents):
         r = BruteFeedParser(contents)
@@ -444,3 +445,10 @@ class BruteFeedParser(object):
             entries = self.root.findall(".//atom:item", self.ns)
             if len(entries) > 0:
                 return entries
+
+    def close(self):
+        self.root = None
+        self.contents = None
+        self.ns = {}
+        self.feed = None
+        self.entries = []
