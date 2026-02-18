@@ -1,7 +1,7 @@
 .PHONY: test
 
 test:
-	poetry run python -m unittest discover -v
+	poetry run python -u -m unittest discover -v
 
 
 build:

@@ -1,7 +1,10 @@
 from datetime import datetime
 import unittest
+import gc
 
 from brutefeedparser import BruteFeedParser
+
+from utils.memorychecker import MemoryChecker
 
 
 from tests.fakeinternetdata import (
@@ -38,6 +41,18 @@ class BruteFeedParserFeedTest(unittest.TestCase):
     """
     Generic feed tests
     """
+    def setUp(self):
+        self.ignore_memory = False
+        self.memory_checker = MemoryChecker()
+        memory_increase = self.memory_checker.get_memory_increase()
+        #print(f"Memory increase {memory_increase} setup")
+
+    def tearDown(self):
+        gc.collect()
+
+        if not self.ignore_memory:
+            memory_increase = self.memory_checker.get_memory_increase()
+            self.assertEqual(memory_increase, 0)
 
     def test_is_valid__true_youtube(self):
         reader = BruteFeedParser.parse(webpage_samtime_youtube_rss)
