@@ -46,7 +46,6 @@ class BruteFeedParserFeedTest(unittest.TestCase):
         self.ignore_memory = True
         self.memory_checker = MemoryChecker()
         memory_increase = self.memory_checker.get_memory_increase()
-        #print(f"Memory increase {memory_increase} setup")
 
     def tearDown(self):
         gc.collect()
@@ -174,7 +173,6 @@ class BruteFeedParserEntriesTest(unittest.TestCase):
         self.ignore_memory = True
         self.memory_checker = MemoryChecker()
         memory_increase = self.memory_checker.get_memory_increase()
-        #print(f"Memory increase {memory_increase} setup")
 
     def tearDown(self):
         gc.collect()
@@ -256,7 +254,6 @@ class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
         self.ignore_memory = True
         self.memory_checker = MemoryChecker()
         memory_increase = self.memory_checker.get_memory_increase()
-        #print(f"Memory increase {memory_increase} setup")
 
     def tearDown(self):
         gc.collect()
@@ -296,3 +293,27 @@ class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
 
         self.assertIn("author", entries[0])
         self.assertTrue(len(entries[0].images) > 0)
+
+
+class BruteFeedParserMemoryTest(unittest.TestCase):
+    """
+    Generic feed tests
+    """
+    def setUp(self):
+        self.ignore_memory = False
+        self.memory_checker = MemoryChecker()
+        memory_increase = self.memory_checker.get_memory_increase()
+
+    def tearDown(self):
+        gc.collect()
+
+        if not self.ignore_memory:
+            memory_increase = self.memory_checker.get_memory_increase()
+            self.assertTrue(memory_increase < 0.1)
+
+    def test_memory_leak(self):
+        for number in range(1, 1000):
+            reader = BruteFeedParser.parse(webpage_samtime_youtube_rss)
+
+            # call tested function
+            self.assertTrue(reader.is_valid())
