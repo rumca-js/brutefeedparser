@@ -110,6 +110,9 @@ class FeedReaderEntry(FeedObject):
             self.author = self.try_to_get_field("creator")
 
     def try_media_thumbnail(self):
+        """
+        Sets thumbnail link
+        """
         self.media_thumbnail = []
 
         if "media" in self.ns:
@@ -117,7 +120,17 @@ class FeedReaderEntry(FeedObject):
             if media_thumbnail:
                 self.media_thumbnail = [{"url": media_thumbnail}]
 
+        if "itunes" in self.ns:
+            if not self.media_thumbnail:
+                media_thumbnail = self.get_prop_attribute(".//itunes:image", "href")
+                if media_thumbnail:
+                    self.media_thumbnail = [{"url": media_thumbnail}]
+
     def try_media_content(self):
+        """
+        Sets video content link
+        YouTube video link
+        """
         self.media_content = []
 
         if "media" in self.ns:

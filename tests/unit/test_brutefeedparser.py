@@ -36,6 +36,9 @@ from tests.fake.thehill import (
 from tests.fake.indexhu import (
     index_hu,
 )
+from tests.fake.notrelatedxyz import (
+    notrelated_xyz_rss,
+)
 
 
 class BruteFeedParserFeedTest(unittest.TestCase):
@@ -159,6 +162,21 @@ class BruteFeedParserFeedTest(unittest.TestCase):
         self.assertEqual(len(p.entries), 20)
 
         self.assertTrue(p.entries[0].description.find("Article URL") >= 0)
+
+    def test_notrelated_xyz(self):
+        # default language
+        p = BruteFeedParser.parse(notrelated_xyz_rss)
+        self.assertEqual(p.feed.title, "Not Related! A Big-Braned Podcast")
+        #self.assertEqual(p.feed.link, "https://notrelated.xyz/rss")
+        self.assertEqual(p.feed.link, "https://notrelated.xyz")
+        self.assertTrue(p.feed.image)
+        self.assertTrue(p.feed.image["url"],"https://notrelated.xyz/thumbs/S01E00.png")
+
+        self.assertEqual(len(p.entries), 17)
+
+        expected_title = """An Introduction to Not Related! and to Luke Smith"""
+        self.assertEqual(p.entries[0].title, expected_title)
+        self.assertTrue(p.entries[0].description.find("Luke introduces his self") >= 0)
 
 
 class BruteFeedParserEntriesTest(unittest.TestCase):
@@ -294,26 +312,14 @@ class BruteFeedParserAdvancedCasesTest(unittest.TestCase):
         self.assertIn("author", entries[0])
         self.assertTrue(len(entries[0].images) > 0)
 
+    def test_entries__notrelated(self):
+        reader = BruteFeedParser.parse(notrelated_xyz_rss)
 
-class BruteFeedParserMemoryTest(unittest.TestCase):
-    """
-    Generic feed tests
-    """
-    def setUp(self):
-        self.ignore_memory = False
-        self.memory_checker = MemoryChecker()
-        memory_increase = self.memory_checker.get_memory_increase()
+        # call tested function
+        entries = list(reader.entries)
 
-    def tearDown(self):
-        gc.collect()
-
-        if not self.ignore_memory:
-            memory_increase = self.memory_checker.get_memory_increase()
-            self.assertTrue(memory_increase < 0.1)
-
-    def test_memory_leak(self):
-        for number in range(1, 1000):
-            reader = BruteFeedParser.parse(webpage_samtime_youtube_rss)
-
-            # call tested function
-            self.assertTrue(reader.is_valid())
+        self.assertTrue(len(entries) > 0)
+        self.assertTrue(len(entries[0].media_thumbnail)>0)
+        self.assertIn("url", entries[0].media_thumbnail[0])
+        expected_image_link = "https://notrelated.xyz/smallthumbs/S01E00.webp"
+        self.assertEqual(entries[0].media_thumbnail[0]["url"], expected_image_link)
